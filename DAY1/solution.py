@@ -24,7 +24,8 @@ def total_distance_from_file(filename):
     return total_dist
 
 # Example usage:
-filename = 'C:\code\PYTHON\challanges\DAY1\data.txt'  # Change this to the path of your file
+filename = 'C:\\code\\PYTHON\\2024Challanges\\DAY1\\data.txt'  # Escaping backslashes
+
 result = total_distance_from_file(filename)
 print("Total distance:", result)
 
