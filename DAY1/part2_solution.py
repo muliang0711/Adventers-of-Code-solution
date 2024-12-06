@@ -1,32 +1,33 @@
-def extract_and_process_xy_from_file(filename):
-    x_list = []
-    y_list = []
-    
-    # Read the file and extract the numbers as x and y
-    with open(filename, 'r') as file:
-        for line in file:
-            # Split each line into two numbers, assign them as x and y
-            x, y = map(int, line.split())
-            x_list.append(x)
-            y_list.append(y)
-    
-    # Process each x and y pair using a for loop
-    for x, y in zip(x_list, y_list):
-        # Your code for processing x and y goes here
-        # For now, we just print x and y as you asked
-        print(f"x: {x}, y: {y}")
-   # Initialize a set to track unique numbers in x
-    seen = set()
-    
-    # Iterate through x_list and detect unique numbers
-    for x in x_list:
-        if x not in seen:
-            seen.add(x)
-            # Count how many times x appears in y_list
-            count_in_y = y_list.count(x)
-            print(f"Unique number in x: {x}, appears {count_in_y} times in y.")
+# File path for the input data
+file_path = "C:\\code\\PYTHON\\2024Challanges\\DAY1\\data.txt"
 
-# Example usage:
-filename = 'C:\code\PYTHON\challanges\DAY1\data.txt'  # Change this to the path of your file
-extract_and_process_xy_from_file(filename)
+# Initialize the lists
+left_list = []
+right_list = []
 
+# Read data from the file
+with open(file_path, 'r') as file:
+    for line in file:
+        # Split each line into two numbers
+        a, b = map(int, line.split())
+        left_list.append(a)
+        right_list.append(b)
+
+# Count the occurrences of each number in the right list
+right_count = {}
+for num in right_list:
+    if num in right_count:
+        right_count[num] += 1
+    else:
+        right_count[num] = 1
+
+# Initialize similarity score
+similarity_score = 0
+
+# Calculate the similarity score by checking the occurrence in the right list
+for num in left_list:
+    similarity_score += num * right_count.get(num, 0)
+
+# Output the final similarity score
+print("Similarity Score:", similarity_score)
+print(left_list)

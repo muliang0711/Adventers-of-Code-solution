@@ -41,7 +41,7 @@ def read_grid_from_file(filename):
     return grid
 
 # Example usage
-filename = 'C:\code\PYTHON\challanges\DAY4\data.txt'  # File containing the grid
+filename = 'C:\\code\\PYTHON\\2024Challanges\\DAY4\\data.txt'  # File containing the grid
 grid = read_grid_from_file(filename)
 result = find_xmas(grid)
 print(f"Total occurrences of XMAS: {result}") #2545

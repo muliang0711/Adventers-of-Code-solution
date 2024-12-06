@@ -1,43 +1,50 @@
 import re
 
-def process_multiplications(filename):
-    # Step 1: Read the corrupted memory data from the file
-    with open(filename, 'r') as file:
-        data = file.read()
+def process_with_toggling(data):
+    # Define the patterns for mul(), do(), and don't()
+    pattern_mul = r"mul\((\d{1,3}),(\d{1,3})\)"  # To match mul(x, y)
+    pattern_do = r"do\(\)"  # To match 'do()'
+    pattern_dont = r"don't\(\)"  # To match 'don't()'
 
-    # Step 2: Define the regex pattern to match mul(x, y) with integers of 1 to 3 digits
-    pattern = r"mul\((\d{1,3}),(\d{1,3})\)"  # This will match mul(x, y) where x and y are integers with 1 to 3 digits
+    # Initialize the flag to True (active)
+    active = True
 
-    # Step 3: Initialize a flag to track whether mul() operations are enabled or not
-    process_mul = True  # Initially, mul() operations are enabled by default
+    # Use re.findall() to find all matches for mul(), do(), and don't()
+    matches = re.findall(f"({pattern_mul}|{pattern_do}|{pattern_dont})", data)
+    #print(matches)
+    # Initialize a list to store the results of the multiplications
     results = []
 
-    # Step 4: Iterate through the data and handle do() and don't() instructions
-    instructions = data.split()  # Split data into individual instructions or tokens
-
-    for instruction in instructions:
-        if instruction == "do()":
-            # Enable future mul() operations
-            process_mul = True
-        elif instruction == "don't()":
-            # Disable future mul() operations
-            process_mul = False
-        elif "mul(" in instruction:  # This is a multiplication expression
-            # Extract the numbers from the mul(x, y) pattern
-            match = re.search(pattern, instruction)
-            if match and process_mul:
-                # If process_mul is True, perform the multiplication
-                num1, num2 = map(int, match.groups())
+    # Loop through the matches and perform actions based on the patterns
+    for match in matches:
+        print(match)
+        if match[0].startswith("mul"):
+            if active:
+                # Extract the two numbers from the match
+                num1, num2 = map(int, match[0].strip("mul()").split(","))
+                # Perform the multiplication
                 result = num1 * num2
+                # Add the result to the results list
                 results.append(result)
+        elif match[0] == "do()":
+            active = True  # Turn the function back on (active)
+        elif match[0] == "don't()":
+            active = False  # Turn the function off (inactive)
 
-    # Step 5: Calculate the sum of all results
-    total_sum = sum(results)
+    # Return the list of results
+    return results
 
-    # Step 6: Return the sum of the results
-    return total_sum
 
-# Example usage
-filename = r"C:\code\PYTHON\challanges\DAY3\data.txt"  # Replace with the correct path to your file
-total_sum = process_multiplications(filename)
-print(f"Total sum of valid mul() operations: {total_sum}")
+# Load data from the file
+with open('C:\\code\\PYTHON\\2024Challanges\\DAY3\\data.txt', 'r') as file:
+    data = file.read()
+
+# Process the data directly with toggling behavior
+multiplication_results = process_with_toggling(data)
+
+# Calculate the total sum of the multiplication results
+total = sum(multiplication_results)
+
+# Print the multiplication results and the total sum
+print("Multiplication Results with Toggling:", multiplication_results)
+print("Total Sum:", total)
