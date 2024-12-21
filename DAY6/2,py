@@ -1,0 +1,85 @@
+
+def simulate_guard_path(grid, start_x, start_y, start_direction):
+    directions = {'^': (-1, 0), '>': (0, 1), 'v': (1, 0), '<': (0, -1)}
+    turn_right = {'^': '>', '>': 'v', 'v': '<', '<': '^'}
+    
+    visited = set()
+    path_details = []
+    current_x, current_y = start_x, start_y
+    current_direction = start_direction
+    steps = 0
+    max_steps = len(grid) * len(grid[0])  # Prevent infinite loops
+    
+    while steps < max_steps:
+        # Try to move in the current direction
+        dx, dy = directions[current_direction]
+        new_x, new_y = current_x + dx, current_y + dy
+        
+        # Check if the move is valid
+        if 0 <= new_x < len(grid) and 0 <= new_y < len(grid[0]) and grid[new_x][new_y] == '.':
+            current_x, current_y = new_x, new_y
+            path_details.append((current_x, current_y, current_direction))
+            steps += 1
+        else:
+            # Turn right if can't move forward
+            current_direction = turn_right[current_direction]
+            
+            # Try to move in the new direction
+            dx, dy = directions[current_direction]
+            new_x, new_y = current_x + dx, current_y + dy
+            
+            if 0 <= new_x < len(grid) and 0 <= new_y < len(grid[0]) and grid[new_x][new_y] == '.':
+                current_x, current_y = new_x, new_y
+                path_details.append((current_x, current_y, current_direction))
+                steps += 1
+            else:
+                # If can't move in new direction, we're stuck
+                break
+        
+        # Check for potential infinite loop
+        if len(set(path_details)) < len(path_details):
+            break
+    
+    return path_details
+
+def count_loop_obstruction_positions(grid):
+    loop_positions = set()
+    
+    # Find the starting position of the direction symbols
+    for x in range(len(grid)):
+        for y in range(len(grid[0])):
+            if grid[x][y] in ['^', 'v', '>', '<']:
+                start_x, start_y = x, y
+                start_direction = grid[x][y]
+                
+                # Try placing an obstruction in each empty cell
+                for obstruction_x in range(len(grid)):
+                    for obstruction_y in range(len(grid[0])):
+                        # Skip the start position and non-empty cells
+                        if (obstruction_x, obstruction_y) == (start_x, start_y) or grid[obstruction_x][obstruction_y] != '.':
+                            continue
+                        
+                        # Create a copy of the grid and place the obstruction
+                        test_grid = [row[:] for row in grid]
+                        test_grid[obstruction_x][obstruction_y] = '#'
+                        
+                        # Simulate the guard's path with the obstruction
+                        path = simulate_guard_path(test_grid, start_x, start_y, start_direction)
+                        
+                        # Check if the path is a loop
+                        if len(set(path)) < len(path):
+                            loop_positions.add((obstruction_x, obstruction_y))
+                
+                break  # We've found the starting position
+    
+    return len(loop_positions)
+
+# Read the grid from the file
+with open('C:\\code\\PYTHON\\2024Challanges\\DAY6\\data.txt', 'r') as file:
+    grid = []
+    for line in file:
+        grid.append(list(line.strip()))
+
+# Count the number of positions that would cause a loop
+result = count_loop_obstruction_positions(grid)
+print("Number of positions that would cause the guard to get stuck in a loop:", result)
